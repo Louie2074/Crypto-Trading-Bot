@@ -15,12 +15,18 @@ const authedClient = new CoinbasePro.AuthenticatedClient(
   apiURI
 );
 
-(function retrieveAccounts() {
+function retrieveAccount(currency) {
   authedClient.getAccounts((error, response, data) => {
     if (error) {
       console.log(error);
     } else {
-      console.log(data);
+      data.forEach((element)=>{
+        if(element.currency===currency){
+            console.log(element);
+        }
+      })
     }
   });
-})();
+}
+
+retrieveAccount('ADA')

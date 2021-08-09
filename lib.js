@@ -1,11 +1,14 @@
 /**
  * Copyright (c) 2021
  *
- * @summary Script that runs crypto bot
+ * @summary Tools to help crypto bot
  * @author Louis Nguyen
  *
  * Created at     : 2021-08-08 11:04:56
  */
+require('dotenv').config();
+
+const fs = require('fs');
 
 function retrieveAccount(client, currency) {
   client.getAccounts((error, response, data) => {
@@ -35,8 +38,8 @@ function retrieveCoinBaseAccount(client, currency) {
   });
 }
 
-function buyParam(price, size, product_id) {
-  return { price, size, product_id };
+function buySellParam(size, product_id) {
+  return { size, product_id, type: 'market' };
 }
 
 function depositParam(amount, currency, coinbase_account_id) {
@@ -45,6 +48,10 @@ function depositParam(amount, currency, coinbase_account_id) {
 
 function convertParam(from, to, amount) {
   return { from, to, amount };
+}
+
+function productID(product_id) {
+  return { product_id };
 }
 
 function getPercentageChange(a, b) {
@@ -69,41 +76,43 @@ function logData() {
     }
   };
 }
+function writeToBuy(amount, bal, currency) {
+  if (!fs.existsSync('./orderLogs')) {
+    fs.mkdirSync('./orderLogs', { recursive: true });
+    fs.writeFileSync('./orderLogs/buyLog.txt', '');
+  }
+  let toAdd = { amount, date: new Date(), bal, currency };
+  let jsonData = JSON.stringify(toAdd, null, 4);
+  fs.appendFile('./orderLogs/buyLog.txt', jsonData, function (err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+}
 
-/*const convertParams = {
-  from: 'USD',
-  to: 'USDC',
-  amount: '5',
-};
-
-const params = {
-  size: '4',
-  price: '39330',
-  side: 'buy',
-  product_id: 'BTC-USD',
-};
-
-const buyParams = {
-  price: '100.00', // USD
-  size: '1', // BTC
-  product_id: 'BTC-USD',
-};
-
-const depositParamsUSD = {
-  amount: '100000.00',
-  currency: 'USD',
-  coinbase_account_id: 'bcdd4c40-df40-5d76-810c-74aab722b223', // USD Coinbase Account ID
-};
-
-
-*/
+function writeToSell(amount, bal, currency) {
+  if (!fs.existsSync('./orderLogs')) {
+    fs.mkdirSync('./orderLogs', { recursive: true });
+    fs.writeFileSync('./orderLogs/sellLog.txt', '');
+  }
+  let toAdd = { amount, date: new Date(), bal, currency };
+  let jsonData = JSON.stringify(toAdd, null, 4);
+  fs.appendFile('./orderLogs/sellLog.txt', jsonData, function (err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+}
 
 module.exports = {
   retrieveAccount,
   retrieveCoinBaseAccount,
   depositParam,
-  buyParam,
+  buySellParam,
   convertParam,
   getPercentageChange,
   logData,
+  productID,
+  writeToBuy,
+  writeToSell,
 };

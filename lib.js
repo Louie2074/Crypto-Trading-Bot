@@ -76,12 +76,13 @@ function logData() {
     }
   };
 }
-function writeToBuy(amount, bal, currency) {
+
+function writeToBuy(amount, price, currency, date) {
   if (!fs.existsSync('./orderLogs')) {
     fs.mkdirSync('./orderLogs', { recursive: true });
     fs.writeFileSync('./orderLogs/buyLog.txt', '');
   }
-  let toAdd = { amount, date: new Date(), bal, currency };
+  let toAdd = { amount, date, price, currency };
   let jsonData = JSON.stringify(toAdd, null, 4);
   fs.appendFile('./orderLogs/buyLog.txt', jsonData, function (err) {
     if (err) {
@@ -90,12 +91,12 @@ function writeToBuy(amount, bal, currency) {
   });
 }
 
-function writeToSell(amount, bal, currency) {
+function writeToSell(amount, price, currency, date) {
   if (!fs.existsSync('./orderLogs')) {
     fs.mkdirSync('./orderLogs', { recursive: true });
     fs.writeFileSync('./orderLogs/sellLog.txt', '');
   }
-  let toAdd = { amount, date: new Date(), bal, currency };
+  let toAdd = { amount, date, price, currency };
   let jsonData = JSON.stringify(toAdd, null, 4);
   fs.appendFile('./orderLogs/sellLog.txt', jsonData, function (err) {
     if (err) {
